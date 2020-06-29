@@ -29,6 +29,18 @@ const userController = {
         })
       }
     })
+  },
+  signInPage: (req, res) => {
+    res.render('signin')
+  },
+  signIn: (req, res) => {
+    req.flash('success_messages', '成功登入')
+    return res.redirect('/restaurants')
+  },
+  logout: (req, res) => {
+    req.flash('success_messages', '成功登出')
+    req.logout()
+    return res.redirect('/signin')
   }
 }
 
