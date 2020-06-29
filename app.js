@@ -6,10 +6,9 @@ const app = express()
 app.engine('hbs', hbs({ defaultLayout: 'main', extname: 'hbs' }))
 app.set('view engine', 'hbs')
 
-app.get('/', (req, res) => {
-  res.send('Hello World')
-})
 
 app.listen(PORT, () => {
   console.log(`The server is running on http://localhost:${PORT}`)
 })
+
+require('./routes')(app)
