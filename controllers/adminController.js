@@ -4,7 +4,6 @@ const Restaurant = db.Restaurant
 const adminController = {
   getRestaurants: (req, res) => {
     return Restaurant.findAll({ raw: true }).then(restaurants => {
-      console.log(restaurants)
       return res.render('admin/restaurants', { restaurants })
     })
   },
@@ -53,7 +52,15 @@ const adminController = {
       req.flash('success_messages', '餐廳更新成功')
       return res.redirect(`/admin/restaurants/${req.params.id}`)
     })
+  },
+
+  deleteRestaurant: (req, res) => {
+    return Restaurant.findByPk(req.params.id).then((restaurant) => {
+      restaurant.destroy()
+        .then(() => res.redirect('/admin/restaurants'))
+    })
   }
 }
+
 
 module.exports = adminController
