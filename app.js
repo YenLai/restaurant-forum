@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 })
 
 app.listen(port, () => {
-  console.log(`The server is running on http://localhost:${PORT}`)
+  console.log(`The server is running on http://localhost:${port}`)
 })
 
 require('./routes')(app, passport)
