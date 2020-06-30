@@ -1,7 +1,7 @@
 const express = require('express')
 const hbs = require('express-handlebars')
 const bodyParser = require('body-parser')
-const PORT = 3000
+const port = process.env.PORT || 3000
 const flash = require('connect-flash')
 const session = require('express-session')
 const passport = require('./config/passport')
@@ -24,7 +24,7 @@ app.use((req, res, next) => {
   next()
 })
 
-app.listen(PORT, () => {
+app.listen(port, () => {
   console.log(`The server is running on http://localhost:${PORT}`)
 })
 
