@@ -12,7 +12,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
-app.engine('hbs', hbs({ defaultLayout: 'main', extname: 'hbs' }))
+app.engine('hbs', hbs({ defaultLayout: 'main', extname: 'hbs', helpers: require('./config/hbs-helpers') }))
 app.set('view engine', 'hbs')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(session({ secret: 'secret', resave: false, saveUninitialized: false }))
