@@ -3,6 +3,7 @@ const db = require('../models')
 const imgur = require('imgur-node-api')
 const user = require('../models/user')
 const category = require('../models/category')
+const e = require('express')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const Restaurant = db.Restaurant
 const User = db.User
@@ -185,6 +186,69 @@ const adminController = {
       })
       .catch(err => console.log(err))
   },
+
+  // categories
+  getCategories: (req, res) => {
+    if (req.params.id) {
+      return Category.findAll({ raw: true, nest: true })
+        .then(categories => {
+          return Category.findByPk(req.params.id)
+            .then(category => {
+              return res.render('admin/categories', { categories, category: category.toJSON() })
+            })
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
+
+    else {
+      Category.findAll({ raw: true, nest: true }).then(categories => {
+        return res.render('admin/categories', { categories })
+      }).catch((err) => {
+        console.log(err)
+      })
+    }
+  },
+  postCategory: (req, res) => {
+    if (!req.body.name) {
+      req.flash('error_messages', 'name didn\'t exist')
+      return res.redirect('back')
+    }
+    else {
+      Category.create({ name: req.body.name })
+        .then(() => {
+          req.flash('success_messages', 'category成功建立!')
+          return res.redirect('/admin/categories')
+        })
+        .catch(err => console.log(err))
+    }
+  },
+  putCategory: (req, res) => {
+    Category.findByPk(req.params.id)
+      .then(category => {
+        return category.update({
+          name: req.body.name
+        })
+      })
+      .then(() => {
+        req.flash('success_messages', 'category成功更新!')
+        res.redirect('/admin/categories')
+      })
+      .catch(err => console.log(err))
+  },
+  deleteCategory: (req, res) => {
+    Category.findByPk(req.params.id)
+      .then((category) => {
+        return category.destroy()
+      })
+      .then(() => {
+        req.flash('success_messages', 'category成功刪除!')
+        res.redirect('/admin/categories')
+      })
+      .catch(err => console.log(err))
+  },
+
 }
 
 
