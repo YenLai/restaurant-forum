@@ -12,6 +12,13 @@ const commentController = {
       RestaurantId
     })
       .then(() => res.redirect(`/restaurant/${RestaurantId}`))
+  },
+  deleteComment: (req, res) => {
+    return Comment.findByPk(req.params.id)
+      .then((comment) => {
+        comment.destroy()
+          .then(() => res.redirect(`/restaurants/${comment.RestaurantId}`))
+      })
   }
 }
 

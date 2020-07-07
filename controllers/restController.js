@@ -48,7 +48,6 @@ const restController = {
         { model: Comment, include: [User] }
       ]
     }).then(restaurant => {
-      console.log(restaurant.Comments[0].dataValues)
       return res.render('detail', { restaurant: restaurant.toJSON() })
     })
       .catch(err => console.log(err))
