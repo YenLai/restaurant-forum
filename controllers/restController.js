@@ -13,6 +13,11 @@ const restController = {
         restaurants: data
       })
     })
+  },
+  getRestaurant: (req, res) => {
+    Restaurant.findByPk(req.params.id, { include: Category }).then(restaurant => {
+      return res.render('detail', { restaurant: restaurant.toJSON() })
+    })
   }
 }
 

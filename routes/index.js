@@ -7,9 +7,8 @@ const upload = multer({ dest: 'temp/' })
 module.exports = (app, passport) => {
 
   const authenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
+    if (req.isAuthenticated())
       return next()
-    }
     else {
       return res.redirect('/signin')
     }
@@ -17,7 +16,8 @@ module.exports = (app, passport) => {
 
   const authticateAdmin = (req, res, next) => {
     if (req.isAuthenticated()) {
-      if (req.user.isAdmin) { return next() }
+      if (req.user.isAdmin)
+        return next()
       else {
         res.redirect('/')
       }
@@ -26,6 +26,7 @@ module.exports = (app, passport) => {
 
   app.get('/', authenticated, (req, res) => res.redirect('/restaurants'))
   app.get('/restaurants', authenticated, restController.getRestaurants)
+  app.get('/restaurants/:id', authenticated, restController.getRestaurant)
 
   app.get('/admin', authticateAdmin, (req, res) => res.redirect('/admin/restaurants'))
   app.get('/admin/restaurants', authticateAdmin, adminController.getRestaurants)
@@ -37,7 +38,6 @@ module.exports = (app, passport) => {
   app.delete('/admin/restaurants/:id', authticateAdmin, adminController.deleteRestaurant)
   app.get('/admin/users', authticateAdmin, adminController.getUsers)
   app.get('/admin/users/:id', authticateAdmin, adminController.putUsers)
-
   app.get('/admin/categories', authticateAdmin, adminController.getCategories)
   app.get('/admin/categories/:id', authticateAdmin, adminController.getCategories)
   app.post('/admin/categories', authticateAdmin, adminController.postCategory)
@@ -46,10 +46,8 @@ module.exports = (app, passport) => {
 
   app.get('/signup', userController.signUpPage)
   app.post('/signup', userController.signUp)
-
   app.get('/signin', userController.signInPage)
   app.post('/signin', passport.authenticate('local', { failureRedirect: '/signin', failureFlash: 'true' }), userController.signIn)
-
   app.get('/logout', userController.logout)
 
 }
