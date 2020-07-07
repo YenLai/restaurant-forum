@@ -1,10 +1,17 @@
 const db = require('../models')
 const Restaurant = db.Restaurant
+const Category = db.Category
 
 const restController = {
   getRestaurants: (req, res) => {
-    return Restaurant.findAll({ raw: true }).then(restaurants => {
-      return res.render('restaurants', restaurants)
+    Restaurant.findAll({ include: Category }).then(restaurants => {
+      const data = restaurants.map(rest => ({
+        ...rest.dataValues,
+        description: rest.dataValues.description.substring(0, 50)
+      }))
+      return res.render('restaurants', {
+        restaurants: data
+      })
     })
   }
 }
