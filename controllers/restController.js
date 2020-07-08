@@ -51,7 +51,17 @@ const restController = {
       .then(restaurant => {
         return res.render('detail', { restaurant: restaurant.toJSON() })
       })
-      .catch(err => console.log(err))
+      .catch((err) => res.send(err))
+  },
+  getFeeds: (req, res) => {
+    return Restaurant.findAll({ raw: true, nest: true, limit: 10, order: [['createdAt', 'DESC']], include: [Category] })
+      .then(restaurants => {
+        Comment.findAll({ limit: 10, raw: true, nest: true, order: [['createdAt', 'DESC']], include: [User, Restaurant] })
+          .then(comments => {
+            return res.render('feeds', { restaurants, comments })
+          })
+      })
+      .catch(err => res.send(err))
   }
 }
 

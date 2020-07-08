@@ -66,9 +66,7 @@ const userController = {
           .then((result) => {
             let page = Number(req.query.page) || 1
             let pages = Math.ceil(result.count / pageLimit)
-            console.log('pages', pages)
             let totalPage = Array.from({ length: pages }).map((_, i) => i + 1)
-            console.log('totalPage', totalPage)
             let prev = page - 1 < 1 ? 1 : page - 1
             let next = page + 1 > pages ? pages : page + 1
             const myComments = result.rows.map(c => ({
