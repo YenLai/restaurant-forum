@@ -49,7 +49,9 @@ const restController = {
       ]
     })
       .then(restaurant => {
-        return res.render('detail', { restaurant: restaurant.toJSON() })
+        restaurant.update({
+          viewCounts: restaurant.viewCounts + 1
+        }).then(() => { return res.render('detail', { restaurant: restaurant.toJSON() }) })
       })
       .catch((err) => res.send(err))
   },
@@ -70,7 +72,8 @@ const restController = {
           .then(result => {
             res.render('dashboard', {
               restaurant: restaurant.toJSON(),
-              comments: result.count
+              comments: result.count,
+              viewCounts: restaurant.viewCounts
             })
           })
       })
