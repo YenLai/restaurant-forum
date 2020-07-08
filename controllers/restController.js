@@ -62,6 +62,19 @@ const restController = {
           })
       })
       .catch(err => res.send(err))
+  },
+  getDashboards: (req, res) => {
+    return Restaurant.findByPk(req.params.id, { include: [Category] })
+      .then(restaurant => {
+        Comment.findAndCountAll({ where: { RestaurantId: restaurant.id } })
+          .then(result => {
+            res.render('dashboard', {
+              restaurant: restaurant.toJSON(),
+              comments: result.count
+            })
+          })
+      })
+      .catch(err => res.send(err))
   }
 }
 
