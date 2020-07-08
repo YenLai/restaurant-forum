@@ -39,7 +39,7 @@ const restController = {
           page, pages, totalPage, prev, next
         })
       })
-    })
+    }).catch((err) => res.send(err))
   },
   getRestaurant: (req, res) => {
     Restaurant.findByPk(req.params.id, {
@@ -47,9 +47,10 @@ const restController = {
         Category,
         { model: Comment, include: [User] }
       ]
-    }).then(restaurant => {
-      return res.render('detail', { restaurant: restaurant.toJSON() })
     })
+      .then(restaurant => {
+        return res.render('detail', { restaurant: restaurant.toJSON() })
+      })
       .catch(err => console.log(err))
   }
 }

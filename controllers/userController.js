@@ -30,7 +30,7 @@ const userController = {
           return res.redirect('/signin')
         })
       }
-    })
+    }).catch((err) => res.send(err))
   },
   signInPage: (req, res) => {
     res.render('signin')

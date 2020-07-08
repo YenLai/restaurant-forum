@@ -20,9 +20,7 @@ const adminController = {
       .then(restaurants => {
         return res.render('admin/restaurants', { restaurants })
       })
-      .catch(err => {
-        console.log(err)
-      })
+      .catch((err) => res.send(err))
   },
 
   createRestaurant: (req, res) => {
@@ -31,7 +29,7 @@ const adminController = {
       nest: true,
     }).then(categories => {
       return res.render('admin/create', { categories })
-    })
+    }).catch((err) => res.send(err))
   },
 
   postRestaurant: (req, res) => {
@@ -55,7 +53,7 @@ const adminController = {
         }).then((restaurant) => {
           req.flash('success_messages', 'restaurant was successfully created')
           return res.redirect('/admin/restaurants')
-        }).catch(err => console.log(err))
+        }).catch((err) => res.send(err))
       })
     } else {
       return Restaurant.create({
@@ -69,7 +67,7 @@ const adminController = {
       }).then(() => {
         req.flash('success_messages', '餐廳新增成功。')
         return res.redirect('/admin/restaurants')
-      }).catch(err => console.log(err))
+      }).catch((err) => res.send(err))
     }
   },
 
@@ -82,7 +80,7 @@ const adminController = {
       .then(restaurant => {
         return res.render('admin/detail', { restaurant })
       })
-      .catch(err => console.log(err))
+      .catch((err) => res.send(err))
   },
 
   editRestaurant: (req, res) => {
@@ -96,7 +94,7 @@ const adminController = {
           restaurant: restaurant.toJSON()
         })
       })
-    }).catch(err => console.log(err))
+    }).catch((err) => res.send(err))
 
   },
 
@@ -126,9 +124,8 @@ const adminController = {
                 req.flash('success_messages', 'restaurant was successfully to update')
                 res.redirect(`/admin/restaurants/${req.params.id}`)
               })
-              .catch(err => console.log(err))
           })
-          .catch(err => console.log(err))
+          .catch((err) => res.send(err))
       })
     } else {
       return Restaurant.findByPk(req.params.id)
@@ -146,9 +143,8 @@ const adminController = {
               req.flash('success_messages', 'restaurant was successfully to update')
               res.redirect(`/admin/restaurants/${req.params.id}`)
             })
-            .catch(err => console.log(err))
         })
-        .catch(err => console.log(err))
+        .catch((err) => res.send(err))
     }
   },
 
@@ -158,9 +154,8 @@ const adminController = {
         restaurant
           .destroy()
           .then(() => res.redirect('/admin/restaurants'))
-          .catch(err => console.log(err))
       })
-      .catch(err => console.log(err))
+      .catch((err) => res.send(err))
   },
 
   // users
@@ -169,7 +164,7 @@ const adminController = {
       .then(users => {
         return res.render('admin/users', { users })
       })
-      .catch(err => console.log(err))
+      .catch((err) => res.send(err))
   },
   putUsers: (req, res) => {
     return User.findByPk(req.params.id)
@@ -178,13 +173,12 @@ const adminController = {
           .update({
             isAdmin: !user.isAdmin
           })
-          .catch(err => console.log(err))
       })
       .then(() => {
         req.flash('success_messages', 'user role成功更新!')
         res.redirect('/admin/users')
       })
-      .catch(err => console.log(err))
+      .catch((err) => res.send(err))
   },
 
   // categories
@@ -197,17 +191,15 @@ const adminController = {
               return res.render('admin/categories', { categories, category: category.toJSON() })
             })
         })
-        .catch((err) => {
-          console.log(err)
-        })
+        .catch((err) => res.send(err))
     }
 
     else {
-      Category.findAll({ raw: true, nest: true }).then(categories => {
-        return res.render('admin/categories', { categories })
-      }).catch((err) => {
-        console.log(err)
-      })
+      Category.findAll({ raw: true, nest: true })
+        .then(categories => {
+          return res.render('admin/categories', { categories })
+        })
+        .catch((err) => res.send(err))
     }
   },
   postCategory: (req, res) => {
@@ -221,7 +213,7 @@ const adminController = {
           req.flash('success_messages', 'category成功建立!')
           return res.redirect('/admin/categories')
         })
-        .catch(err => console.log(err))
+        .catch((err) => res.send(err))
     }
   },
   putCategory: (req, res) => {
@@ -235,7 +227,7 @@ const adminController = {
         req.flash('success_messages', 'category成功更新!')
         res.redirect('/admin/categories')
       })
-      .catch(err => console.log(err))
+      .catch((err) => res.send(err))
   },
   deleteCategory: (req, res) => {
     Category.findByPk(req.params.id)
@@ -246,7 +238,7 @@ const adminController = {
         req.flash('success_messages', 'category成功刪除!')
         res.redirect('/admin/categories')
       })
-      .catch(err => console.log(err))
+      .catch((err) => res.send(err))
   },
 
 }
