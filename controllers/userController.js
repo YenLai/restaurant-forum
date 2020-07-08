@@ -81,7 +81,7 @@ const userController = {
               count: result.count,
               myComments,
               page, totalPage, prev, next,
-              start: offset + 1,
+              start: result.count > 0 ? offset + 1 : 0,
               end: offset + pageLimit > result.count ? result.count : offset + pageLimit
             })
           })
