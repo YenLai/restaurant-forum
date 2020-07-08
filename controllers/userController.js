@@ -1,5 +1,7 @@
 const db = require('../models')
 const bcrypt = require('bcryptjs')
+const imgur = require('imgur-node-api')
+const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const User = db.User
 
 const userController = {
@@ -41,7 +43,62 @@ const userController = {
     req.flash('success_messages', '成功登出')
     req.logout()
     return res.redirect('/signin')
-  }
+  },
+  getUser: (req, res) => {
+    // (req.params.id) : String ,  (req.user.id) : Number
+    User.findByPk(req.params.id)
+      .then(user => {
+        res.render('user', {
+          user: user.toJSON(),
+          isCurrentUser: req.user.id === Number(req.params.id)
+        })
+      })
+      .catch(err => res.send(err))
+  },
+  editUser: (req, res) => {
+    if (req.user.id !== Number(req.params.id))
+      return res.redirect('back')
+
+    User.findByPk(req.params.id)
+      .then(user => {
+        res.render('user_edit', { user: user.toJSON() })
+      })
+      .catch(err => res.send(err))
+  },
+  putUser: (req, res) => {
+    const { file } = req
+    if (file) {
+      imgur.setClientID(IMGUR_CLIENT_ID);
+      imgur.upload(file.path, (err, img) => {
+        return User.findByPk(req.params.id)
+          .then((user) => {
+            console.log(img)
+            return user.update({
+              name: req.body.name,
+              image: img.data.link
+            }).then(() => {
+              req.flash('success_messages', 'User was successfully updated!')
+              return res.redirect(`/users/${user.id}`)
+            })
+          })
+          .catch(err => res.send(err))
+      })
+    }
+    else {
+      User.findByPk(req.params.id)
+        .then(user => {
+          return user.update({
+            name: req.body.name,
+            image: user.image
+          }).then(() => {
+            req.flash('success_messages', 'User was successfully updated!')
+            return res.redirect(`/users/${user.id}`)
+          })
+        })
+        .catch(err => res.send(err))
+    }
+  },
+
 }
 
 module.exports = userController
