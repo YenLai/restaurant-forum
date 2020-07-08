@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Restaurant.belongsTo(models.Category)
       Restaurant.hasMany(models.Comment)
+      Restaurant.hasMany(models.Favorite)
     }
   };
   Restaurant.init({

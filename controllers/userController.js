@@ -5,6 +5,7 @@ const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const User = db.User
 const Comment = db.Comment
 const Restaurant = db.Restaurant
+const Favorite = db.Favorite
 
 const userController = {
   signUpPage: (req, res) => {
@@ -129,7 +130,22 @@ const userController = {
         .catch(err => res.send(err))
     }
   },
-
+  addFavorite: (req, res) => {
+    Favorite.create({
+      UserId: req.user.id,
+      RestaurantId: req.params.id
+    })
+      .then(() => res.redirect('back'))
+      .catch(err => res.send(err))
+  },
+  removeFavorite: (req, res) => {
+    return Favorite.findOne({ where: { UserId: req.user.id, RestaurantId: Number(req.params.id) } })
+      .then((favorite) => {
+        favorite.destroy()
+          .then(() => res.redirect('back'))
+      })
+      .catch(err => res.send(err))
+  }
 }
 
 module.exports = userController
