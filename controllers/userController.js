@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const User = db.User
+const Comment = db.Comment
+const Restaurant = db.Restaurant
 
 const userController = {
   signUpPage: (req, res) => {
@@ -46,12 +48,43 @@ const userController = {
   },
   getUser: (req, res) => {
     // (req.params.id) : String ,  (req.user.id) : Number
+    const pageLimit = 8
+    let offset = 0
+    if (req.query.page)
+      offset = (req.query.page - 1) * pageLimit
+
     User.findByPk(req.params.id)
       .then(user => {
-        res.render('user', {
-          user: user.toJSON(),
-          isCurrentUser: req.user.id === Number(req.params.id)
+        return Comment.findAndCountAll({
+          where: { UserId: user.id },
+          raw: true,
+          nest: true,
+          include: Restaurant,
+          offset,
+          limit: pageLimit
         })
+          .then((result) => {
+            let page = Number(req.query.page) || 1
+            let pages = Math.ceil(result.count / pageLimit)
+            console.log('pages', pages)
+            let totalPage = Array.from({ length: pages }).map((_, i) => i + 1)
+            console.log('totalPage', totalPage)
+            let prev = page - 1 < 1 ? 1 : page - 1
+            let next = page + 1 > pages ? pages : page + 1
+            const myComments = result.rows.map(c => ({
+              id: c.Restaurant.id,
+              image: c.Restaurant.image,
+            }))
+            res.render('user', {
+              user: user.toJSON(),
+              isCurrentUser: req.user.id === Number(req.params.id),
+              count: result.count,
+              myComments,
+              page, totalPage, prev, next,
+              start: offset + 1,
+              end: offset + pageLimit > result.count ? result.count : offset + pageLimit
+            })
+          })
       })
       .catch(err => res.send(err))
   },

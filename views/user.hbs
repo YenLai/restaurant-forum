@@ -7,10 +7,51 @@
       <div class="card-body">
         <h3 class="card-title">{{user.name}}</h3>
         <h5 class="card-text">{{user.email}}</h5>
+        <p>{{count}} 已評論餐廳</p>
         {{#if isCurrentUser}}
         <a href="/users/{{user.id}}/edit" class="btn btn-primary mt-5">edit</a>
         {{/if}}
       </div>
     </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="row ">
+      <div class="col mr-auto">
+        {{count}} 已評論餐廳
+      </div>
+      <div class="mr-3">
+        正在顯示第{{start}}-{{end}}筆評論
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    {{#each myComments}}
+    <a href="/restaurants/{{this.id}}" class="m-1" style="text-decoration: none;">
+      <img src="{{this.image}}" alt="picture" class="img-fluid" style="width: 120px;">
+    </a>
+    {{/each}}
+  </div>
+  <div class="card-footer">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item">
+          <a class="page-link" href="/users/{{user.id}}?page={{prev}}" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        {{#each totalPage}}
+        <li class="page-item {{#ifCond this ../page}}active {{/ifCond}}">
+          <a class="page-link" href="/users/{{../user.id}}?page={{this}}">{{this}}</a>
+        </li>
+        {{/each}}
+        <a class="page-link" href="/users/{{user.id}}?page={{next}}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+        </li>
+      </ul>
+    </nav>
   </div>
 </div>
