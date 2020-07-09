@@ -6,6 +6,7 @@ const User = db.User
 const Comment = db.Comment
 const Restaurant = db.Restaurant
 const Favorite = db.Favorite
+const Like = db.Like
 
 const userController = {
   signUpPage: (req, res) => {
@@ -133,19 +134,36 @@ const userController = {
   addFavorite: (req, res) => {
     return Favorite.create({
       UserId: req.user.id,
-      RestaurantId: req.params.id
+      RestaurantId: req.params.restaurantId
     })
       .then(() => res.redirect('back'))
       .catch(err => res.send(err))
   },
   removeFavorite: (req, res) => {
-    return Favorite.findOne({ where: { UserId: req.user.id, RestaurantId: req.params.id } })
+    return Favorite.findOne({ where: { UserId: req.user.id, RestaurantId: req.params.restaurantId } })
       .then((favorite) => {
         favorite.destroy()
           .then(() => res.redirect('back'))
       })
       .catch(err => res.send(err))
+  },
+  addLike: (req, res) => {
+    return Like.create({
+      UserId: req.user.id,
+      RestaurantId: req.params.restaurantId
+    })
+      .then(() => res.redirect('back'))
+      .catch(err => res.send(err))
+  },
+  removeLike: (req, res) => {
+    return Like.findOne({ where: { UserId: req.user.id, RestaurantId: req.params.restaurantId } })
+      .then((like) => {
+        like.destroy()
+          .then(() => res.redirect('back'))
+      })
+      .catch(err => res.send(err))
   }
+
 }
 
 module.exports = userController

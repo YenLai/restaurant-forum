@@ -1,6 +1,19 @@
 <div class="row">
   <div class="col-md-12">
-    <h1>{{restaurant.name}}</h1>
+    <div class="d-flex align-items-center">
+      <h1>{{restaurant.name}}</h1>
+      {{#if isLiked}}
+      <form action="/like/{{restaurant.id}}?_method=DELETE" method="POST" class="ml-3" id="unlikeForm{{restaurant.id}}">
+        <i class="fas fa-heart fa-2x" onclick="document.getElementById('unlikeForm{{restaurant.id}}').submit()"
+          style="color: #ED4956;"></i>
+      </form>
+      {{else}}
+      <form action="/like/{{restaurant.id}}" method="POST" class="ml-3" id="likeForm{{restaurant.id}}">
+        <i class="far fa-heart fa-2x" onclick="document.getElementById('likeForm{{restaurant.id}}').submit()"
+          style="color: #ED4956;"></i>
+      </form>
+      {{/if}}
+    </div>
     <p>[{{restaurant.Category.name}}]</p>
   </div>
   <div class="col-md-4">

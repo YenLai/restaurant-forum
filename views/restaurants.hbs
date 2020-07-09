@@ -32,14 +32,28 @@
         </p>
         <span class="badge badge-secondary">{{this.categoryName}}</span>
         <p class="card-text">{{this.description}}</p>
-        {{#if this.isFavorited }}
-        <form action="/favorite/{{this.id}}?_method=DELETE" method="POST">
-          <button type="submit" class="btn btn-danger">移除最愛</button></form>
-        {{else}}
-        <form action="/favorite/{{this.id}}" method="POST">
-          <button type="submit" class="btn btn-primary">加到最愛</button>
-        </form>
-        {{/if}}
+        <div class="row align-items-center">
+          {{#if this.isFavorited }}
+          <form action="/favorite/{{this.id}}?_method=DELETE" method="POST" class="col mr-auto">
+            <button type="submit" class="btn btn-danger mr-2">移除最愛</button></form>
+          {{else}}
+          <form action="/favorite/{{this.id}}" method="POST" class="col mr-auto">
+            <button type="submit" class="btn btn-primary mr-2">加到最愛</button>
+          </form>
+          {{/if}}
+          {{#if this.isLiked }}
+          <form action="/like/{{this.id}}?_method=DELETE" method="POST" id="unlikeForm{{this.id}}" class="col-1 mr-4">
+            <i class="fas fa-heart fa-lg" onclick="document.getElementById('unlikeForm{{this.id}}').submit()"
+              style="color: #ED4956;"></i>
+          </form>
+          {{else}}
+          <form action="/like/{{this.id}}" method="post" id="likeForm{{this.id}}" class="col-1 mr-4">
+            <i class="far fa-heart fa-lg" onclick="document.getElementById('likeForm{{this.id}}').submit()"
+              style="color: #ED4956;"></i>
+          </form>
+          {{/if}}
+
+        </div>
       </div>
     </div>
   </div>
