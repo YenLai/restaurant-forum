@@ -1,6 +1,7 @@
 const db = require('../models')
 const bcrypt = require('bcryptjs')
 const imgur = require('imgur-node-api')
+const user = require('../models/user')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const User = db.User
 const Comment = db.Comment
@@ -162,8 +163,19 @@ const userController = {
           .then(() => res.redirect('back'))
       })
       .catch(err => res.send(err))
+  },
+  getTopUser: (req, res) => {
+    return User.findAll({ include: [{ model: User, as: 'Followers' }] })
+      .then(users => {
+        users = users.map(user => ({
+          ...user.dataValues,
+          FollowerCount: user.Followers.length,
+          isFollowd: req.user.Followings.map(d => d.id).includes(user.id)
+        }))
+        users = users.sort((a, b) => b.FollowerCount - a.FollowerCount)
+        return res.render('topUser', { users })
+      })
   }
-
 }
 
 module.exports = userController
