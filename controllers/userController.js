@@ -131,7 +131,7 @@ const userController = {
     }
   },
   addFavorite: (req, res) => {
-    Favorite.create({
+    return Favorite.create({
       UserId: req.user.id,
       RestaurantId: req.params.id
     })
@@ -139,7 +139,7 @@ const userController = {
       .catch(err => res.send(err))
   },
   removeFavorite: (req, res) => {
-    return Favorite.findOne({ where: { UserId: req.user.id, RestaurantId: Number(req.params.id) } })
+    return Favorite.findOne({ where: { UserId: req.user.id, RestaurantId: req.params.id } })
       .then((favorite) => {
         favorite.destroy()
           .then(() => res.redirect('back'))
