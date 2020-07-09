@@ -7,51 +7,90 @@
       <div class="card-body">
         <h3 class="card-title">{{user.name}}</h3>
         <h5 class="card-text">{{user.email}}</h5>
-        <p>{{count}} 已評論餐廳</p>
-        {{#if isCurrentUser}}
-        <a href="/users/{{user.id}}/edit" class="btn btn-primary mt-5">edit</a>
-        {{/if}}
+        <p>{{myComments.length}} 已評論餐廳
+          <br>
+          {{Favorited.length}} 收藏的餐廳
+          <br>
+          {{Followings.length}} followings (追蹤者)
+          <br>
+          {{Followers.length}} followers (追隨者)
+        </p>
+        <div class="row ml-1 mt-5">
+          {{#if isCurrentUser}}
+          <a href="/users/{{user.id}}/edit" class="btn btn-primary col-1">edit</a>
+          {{/if}}
+          {{#if isFollowing}}
+          <form action="/following/{{user.id}}?_method=DELETE" method="post" class="col-1">
+            <button type="submit" class="btn btn-danger">取消追蹤</button>
+          </form>
+          {{else}}
+          <form action="/following/{{user.id}}" method="post" class="col-1">
+            <button type="submit" class="btn btn-primary">追蹤</button>
+          </form>
+          {{/if}}
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="card">
-  <div class="card-header">
-    <div class="row ">
-      <div class="col mr-auto">
-        {{count}} 已評論餐廳
-      </div>
-      <div class="mr-3">
-        正在顯示第{{start}}-{{end}}筆評論
+<div class="row mb-3">
+  <!--- Followings --->
+  <div class="card col-4">
+    <div class="card-header">{{Followings.length}} followings (追蹤者)</div>
+    <div class="card-body">
+      <div class="card-text">
+        {{#each Followings}}
+        <a href="/users/{{this.id}}" style="text-decoration: none;">
+          <img src="{{this.image}}" alt="{{this.name}}" style="width: 70px;">
+        </a>
+        {{/each}}
       </div>
     </div>
   </div>
-  <div class="card-body">
-    {{#each myComments}}
-    <a href="/restaurants/{{this.id}}" class="m-1" style="text-decoration: none;">
-      <img src="{{this.image}}" alt="picture" class="img-fluid" style="width: 120px;">
-    </a>
-    {{/each}}
-  </div>
-  <div class="card-footer">
-    <nav aria-label="Page navigation example">
-      <ul class="pagination">
-        <li class="page-item">
-          <a class="page-link" href="/users/{{user.id}}?page={{prev}}" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        {{#each totalPage}}
-        <li class="page-item {{#ifCond this ../page}}active {{/ifCond}}">
-          <a class="page-link" href="/users/{{../user.id}}?page={{this}}">{{this}}</a>
-        </li>
-        {{/each}}
-        <a class="page-link" href="/users/{{user.id}}?page={{next}}" aria-label="Next">
-          <span aria-hidden="true">&raquo;</span>
+
+  <!--- Comments --->
+  <div class="card col-8">
+    <div class="card-header">
+      {{myComments.length}} 已評論餐廳
+    </div>
+    <div class="card-body">
+      <div class="card-text">
+        {{#each myComments}}
+        <a href="/restaurants/{{this.id}}" style="text-decoration: none;">
+          <img src="{{this.image}}" alt="picture" style="width: 110px;">
         </a>
-        </li>
-      </ul>
-    </nav>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-2">
+  <!--- Followers --->
+  <div class="card col-4">
+    <div class="card-header">{{Followers.length}} followers (追隨者)</div>
+    <div class="card-body">
+      <div class="card-text">
+        {{#each Followers}}
+        <a href="/users/{{this.id}}" style="text-decoration: none;">
+          <img src="{{this.image}}" alt="{{this.name}}" style="width: 70px;">
+        </a>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+  <!--- Favorite --->
+  <div class="card col-8">
+    <div class="card-header">{{Favorited.length}} 收藏的餐廳</div>
+    <div class="card-body">
+      <div class="card-text">
+        {{#each Favorited}}
+        <a href="/restaurants/{{this.id}}" style="text-decoration: none;">
+          <img src="{{this.image}}" alt="{{this.name}}" style="width: 110px;">
+        </a>
+        {{/each}}
+      </div>
+    </div>
   </div>
 </div>

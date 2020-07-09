@@ -39,7 +39,7 @@
           </a>
         </p>
         <span class="badge badge-secondary">{{this.categoryName}}</span>
-        <p class="card-text">{{this.description}}</p>
+        <p class="card-text" style="height: 3rem;">{{this.description}}</p>
         <div class="row align-items-center">
           {{#if this.isFavorited }}
           <form action="/favorite/{{this.id}}?_method=DELETE" method="POST" class="col mr-auto">

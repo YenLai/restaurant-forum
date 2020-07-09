@@ -1,7 +1,6 @@
 const db = require('../models')
 const bcrypt = require('bcryptjs')
 const imgur = require('imgur-node-api')
-const user = require('../models/user')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const User = db.User
 const Comment = db.Comment
@@ -52,39 +51,29 @@ const userController = {
   },
   getUser: (req, res) => {
     // (req.params.id) : String ,  (req.user.id) : Number
-    const pageLimit = 8
-    let offset = 0
-    if (req.query.page)
-      offset = (req.query.page - 1) * pageLimit
-
     User.findByPk(req.params.id)
       .then(user => {
-        return Comment.findAndCountAll({
+        return Comment.findAll({
           where: { UserId: user.id },
           raw: true,
           nest: true,
-          include: Restaurant,
-          offset,
-          limit: pageLimit
+          include: Restaurant
         })
           .then((result) => {
-            let page = Number(req.query.page) || 1
-            let pages = Math.ceil(result.count / pageLimit)
-            let totalPage = Array.from({ length: pages }).map((_, i) => i + 1)
-            let prev = page - 1 < 1 ? 1 : page - 1
-            let next = page + 1 > pages ? pages : page + 1
-            const myComments = result.rows.map(c => ({
+            let myComments = result.map(c => ({
               id: c.Restaurant.id,
               image: c.Restaurant.image,
             }))
+            myComments = RemoveDuplicatesComments(myComments.sort((a, b) => (a.id - b.id)))
+            let isFollowing = req.user.Followings.map(d => d.id).includes(Number(req.params.id))
             res.render('user', {
               user: user.toJSON(),
               isCurrentUser: req.user.id === Number(req.params.id),
-              count: result.count,
+              isFollowing,
               myComments,
-              page, totalPage, prev, next,
-              start: result.count > 0 ? offset + 1 : 0,
-              end: offset + pageLimit > result.count ? result.count : offset + pageLimit
+              Followers: req.user.Followers,
+              Followings: req.user.Followings,
+              Favorited: req.user.FavoritedRestaurants
             })
           })
       })
@@ -193,6 +182,18 @@ const userController = {
       })
       .catch(err => res.send(err))
   }
+}
+
+function RemoveDuplicatesComments(sortedArray) {
+  let index = 0
+  let count = 0
+  for (let i = 1; i < sortedArray.length; i++) {
+    if (sortedArray[i].id !== sortedArray[index].id) {
+      index++
+      sortedArray[index] = sortedArray[i]
+    }
+  }
+  return sortedArray.slice(0, index + 1)
 }
 
 module.exports = userController
