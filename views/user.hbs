@@ -18,7 +18,7 @@
         <div class="row ml-1 mt-5">
           {{#if isCurrentUser}}
           <a href="/users/{{_user.id}}/edit" class="btn btn-primary col-1">edit</a>
-          {{/if}}
+          {{else}}
           {{#if isFollowing}}
           <form action="/following/{{_user.id}}?_method=DELETE" method="post" class="col-1">
             <button type="submit" class="btn btn-danger">取消追蹤</button>
@@ -27,6 +27,7 @@
           <form action="/following/{{_user.id}}" method="post" class="col-1">
             <button type="submit" class="btn btn-primary">追蹤</button>
           </form>
+          {{/if}}
           {{/if}}
         </div>
       </div>

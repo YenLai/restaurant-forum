@@ -57,23 +57,25 @@ const userController = {
           where: { UserId: user.id },
           raw: true,
           nest: true,
-          include: Restaurant
+          include: Restaurant,
+          order: [['createdAt', 'DESC']]
         })
           .then((result) => {
             let myComments = result.map(c => ({
               id: c.Restaurant.id,
               image: c.Restaurant.image,
+              createdAt: c.createdAt
             }))
-            myComments = RemoveDuplicatesComments(myComments.sort((a, b) => (a.id - b.id)))
+            myComments = removeDuplicatesComments(myComments.sort((a, b) => (a.id - b.id))).sort((a, b) => (b.createdAt - a.createdAt))
             let isFollowing = req.user.Followings.map(d => d.id).includes(Number(req.params.id))
             res.render('user', {
               _user: user.toJSON(),
               isCurrentUser: req.user.id === Number(req.params.id),
               isFollowing,
               myComments,
-              Followers: req.user.Followers,
-              Followings: req.user.Followings,
-              Favorited: req.user.FavoritedRestaurants
+              Followers: req.user.Followers.sort((a, b) => (b.Followship.createdAt - a.Followship.createdAt)),
+              Followings: req.user.Followings.sort((a, b) => (b.Followship.createdAt - a.Followship.createdAt)),
+              Favorited: req.user.FavoritedRestaurants.sort((a, b) => (b.Favorite.createdAt - a.Favorite.createdAt))
             })
           })
       })
@@ -184,7 +186,7 @@ const userController = {
   }
 }
 
-function RemoveDuplicatesComments(sortedArray) {
+function removeDuplicatesComments(sortedArray) {
   let index = 0
   let count = 0
   for (let i = 1; i < sortedArray.length; i++) {
