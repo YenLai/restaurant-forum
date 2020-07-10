@@ -1,12 +1,12 @@
 <div class="card mb-3 w-100" style="">
   <div class="row no-gutters">
     <div class="col-md-4">
-      <img src="{{user.image}}" class="card-img img-thumbnail" alt="user image">
+      <img src="{{_user.image}}" class="card-img img-thumbnail" alt="user image">
     </div>
     <div class="col-md-8">
       <div class="card-body">
-        <h3 class="card-title">{{user.name}}</h3>
-        <h5 class="card-text">{{user.email}}</h5>
+        <h3 class="card-title">{{_user.name}}</h3>
+        <h5 class="card-text">{{_user.email}}</h5>
         <p>{{myComments.length}} 已評論餐廳
           <br>
           {{Favorited.length}} 收藏的餐廳
@@ -17,14 +17,14 @@
         </p>
         <div class="row ml-1 mt-5">
           {{#if isCurrentUser}}
-          <a href="/users/{{user.id}}/edit" class="btn btn-primary col-1">edit</a>
+          <a href="/users/{{_user.id}}/edit" class="btn btn-primary col-1">edit</a>
           {{/if}}
           {{#if isFollowing}}
-          <form action="/following/{{user.id}}?_method=DELETE" method="post" class="col-1">
+          <form action="/following/{{_user.id}}?_method=DELETE" method="post" class="col-1">
             <button type="submit" class="btn btn-danger">取消追蹤</button>
           </form>
           {{else}}
-          <form action="/following/{{user.id}}" method="post" class="col-1">
+          <form action="/following/{{_user.id}}" method="post" class="col-1">
             <button type="submit" class="btn btn-primary">追蹤</button>
           </form>
           {{/if}}

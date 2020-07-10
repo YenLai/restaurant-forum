@@ -67,7 +67,7 @@ const userController = {
             myComments = RemoveDuplicatesComments(myComments.sort((a, b) => (a.id - b.id)))
             let isFollowing = req.user.Followings.map(d => d.id).includes(Number(req.params.id))
             res.render('user', {
-              user: user.toJSON(),
+              _user: user.toJSON(),
               isCurrentUser: req.user.id === Number(req.params.id),
               isFollowing,
               myComments,
