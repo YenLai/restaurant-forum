@@ -65,7 +65,6 @@ const adminController = {
     adminService.getRestaurant(req, res, (data) => {
       return res.render('admin/detail', data)
     })
-      .catch((err) => res.send(err))
   },
 
   editRestaurant: (req, res) => {
@@ -159,24 +158,9 @@ const adminController = {
 
   // categories
   getCategories: (req, res) => {
-    if (req.params.id) {
-      return Category.findAll({ raw: true, nest: true })
-        .then(categories => {
-          return Category.findByPk(req.params.id)
-            .then(category => {
-              return res.render('admin/categories', { categories, category: category.toJSON() })
-            })
-        })
-        .catch((err) => res.send(err))
-    }
-
-    else {
-      Category.findAll({ raw: true, nest: true })
-        .then(categories => {
-          return res.render('admin/categories', { categories })
-        })
-        .catch((err) => res.send(err))
-    }
+    adminService.getCategories(req, res, (data) => {
+      return res.render('admin/categories', data)
+    })
   },
   postCategory: (req, res) => {
     if (!req.body.name) {

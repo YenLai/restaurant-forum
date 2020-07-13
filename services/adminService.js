@@ -7,6 +7,7 @@ const adminService = {
     return Restaurant.findAll({ raw: true, nest: true, include: [Category] }).then(restaurants => {
       callback({ restaurants: restaurants })
     })
+      .catch((err) => res.send(err))
   },
   getRestaurant: (req, res, callback) => {
     return Restaurant.findByPk(req.params.id, {
@@ -17,6 +18,26 @@ const adminService = {
       .then((restaurant) => {
         callback({ restaurant })
       })
-  }
+      .catch((err) => res.send(err))
+  },
+  getCategories: (req, res, callback) => {
+    if (req.params.id) {
+      return Category.findAll({ raw: true, nest: true })
+        .then(categories => {
+          return Category.findByPk(req.params.id)
+            .then(category => {
+              callback({ categories, category: category.toJSON() })
+            })
+        })
+        .catch((err) => res.send(err))
+    }
+    else {
+      Category.findAll({ raw: true, nest: true })
+        .then(categories => {
+          callback({ categories })
+        })
+        .catch((err) => res.send(err))
+    }
+  },
 }
 module.exports = adminService

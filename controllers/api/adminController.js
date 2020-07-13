@@ -13,7 +13,11 @@ const adminController = {
     adminService.getRestaurant(req, res, (data) => {
       return res.json(data)
     })
-      .catch((err) => res.send(err))
+  },
+  getCategories: (req, res) => {
+    adminService.getCategories(req, res, (data) => {
+      return res.json(data)
+    })
   },
 }
 module.exports = adminController
