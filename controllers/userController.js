@@ -1,6 +1,7 @@
 const db = require('../models')
 const bcrypt = require('bcryptjs')
 const imgur = require('imgur-node-api')
+const user = require('../models/user')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const User = db.User
 const Comment = db.Comment
@@ -93,36 +94,28 @@ const userController = {
   },
   putUser: (req, res) => {
     const { file } = req
-    if (file) {
-      imgur.setClientID(IMGUR_CLIENT_ID);
-      imgur.upload(file.path, (err, img) => {
-        return User.findByPk(req.params.id)
-          .then((user) => {
-            console.log(img)
+    return User.findByPk(req.params.id)
+      .then((user) => {
+        uploadImg(file)
+          .then((img) => {
             return user.update({
               name: req.body.name,
               image: img.data.link
-            }).then(() => {
-              req.flash('success_messages', 'User was successfully updated!')
-              return res.redirect(`/users/${user.id}`)
             })
           })
-          .catch(err => res.send(err))
-      })
-    }
-    else {
-      User.findByPk(req.params.id)
-        .then(user => {
-          return user.update({
-            name: req.body.name,
-            image: user.image
-          }).then(() => {
+          .catch((err) => {
+            // file doesn't exist or fail to upload.
+            console.log(err)
+            return user.update({
+              name: req.body.name,
+              image: user.image
+            })
+          })
+          .then(() => {
             req.flash('success_messages', 'User was successfully updated!')
             return res.redirect(`/users/${user.id}`)
           })
-        })
-        .catch(err => res.send(err))
-    }
+      })
   },
   addFavorite: (req, res) => {
     return Favorite.create({
@@ -196,6 +189,22 @@ function removeDuplicatesComments(sortedArray) {
     }
   }
   return sortedArray.slice(0, index + 1)
+}
+
+function uploadImg(file) {
+  return new Promise((resolve, reject) => {
+    imgur.setClientID(IMGUR_CLIENT_ID)
+    if (file) {
+      imgur.upload(file.path, (err, img) => {
+        if (err)
+          reject(err)
+        resolve(img)
+      })
+    }
+    else {
+      reject('file doesn\'t exist.')
+    }
+  })
 }
 
 module.exports = userController

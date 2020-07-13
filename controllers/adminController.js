@@ -1,8 +1,6 @@
 const fs = require('fs')
 const db = require('../models')
 const imgur = require('imgur-node-api')
-const user = require('../models/user')
-const category = require('../models/category')
 const e = require('express')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const Restaurant = db.Restaurant
@@ -39,9 +37,8 @@ const adminController = {
       return res.redirect('back')
     }
     const { file } = req
-    if (file) {
-      imgur.setClientID(IMGUR_CLIENT_ID);
-      imgur.upload(file.path, (err, img) => {
+    uploadImg(file)
+      .then((img) => {
         return Restaurant.create({
           name,
           tel,
@@ -50,25 +47,25 @@ const adminController = {
           description,
           image: img.data.link,
           CategoryId
-        }).then((restaurant) => {
-          req.flash('success_messages', 'restaurant was successfully created')
-          return res.redirect('/admin/restaurants')
-        }).catch((err) => res.send(err))
+        })
       })
-    } else {
-      return Restaurant.create({
-        name,
-        tel,
-        address,
-        opening_hours,
-        description,
-        image: null,
-        CategoryId
-      }).then(() => {
+      .catch((err) => {
+        // file doesn't exist or fail to upload.
+        console.log(err)
+        return Restaurant.create({
+          name,
+          tel,
+          address,
+          opening_hours,
+          description,
+          image: null,
+          CategoryId
+        })
+      })
+      .then(() => {
         req.flash('success_messages', '餐廳新增成功。')
         return res.redirect('/admin/restaurants')
-      }).catch((err) => res.send(err))
-    }
+      })
   },
 
   getRestaurant: (req, res) => {
@@ -104,48 +101,39 @@ const adminController = {
       req.flash('error_messages', "name didn't exist")
       return res.redirect('back')
     }
-
     const { file } = req
-    if (file) {
-      imgur.setClientID(IMGUR_CLIENT_ID);
-      imgur.upload(file.path, (err, img) => {
-        return Restaurant.findByPk(req.params.id)
-          .then((restaurant) => {
+    return Restaurant.findByPk(req.params.id)
+      .then((restaurant) => {
+        uploadImg(file)
+          .then((img) => {
             return restaurant.update({
               name,
               tel,
               address,
               opening_hours,
               description,
-              image: file ? img.data.link : restaurant.image,
+              image: img.data.link,
               CategoryId
             })
-              .then(() => {
-                req.flash('success_messages', 'restaurant was successfully to update')
-                res.redirect(`/admin/restaurants/${req.params.id}`)
-              })
           })
-          .catch((err) => res.send(err))
-      })
-    } else {
-      return Restaurant.findByPk(req.params.id)
-        .then((restaurant) => {
-          return restaurant.update({
-            name,
-            tel,
-            address,
-            opening_hours,
-            description,
-            image: restaurant.image,
-            CategoryId
-          })
-            .then(() => {
-              req.flash('success_messages', 'restaurant was successfully to update')
-              res.redirect(`/admin/restaurants/${req.params.id}`)
+          .catch((err) => {
+            // file doesn't exist or fail to upload.
+            console.log(err)
+            return restaurant.update({
+              name,
+              tel,
+              address,
+              opening_hours,
+              description,
+              image: restaurant.image,
+              CategoryId
             })
-        })
-        .catch((err) => res.send(err))
-    }
+          })
+          .then(() => {
+            req.flash('success_messages', 'restaurant was successfully to update')
+            res.redirect(`/admin/restaurants/${req.params.id}`)
+          })
+      })
   },
 
   deleteRestaurant: (req, res) => {
@@ -243,5 +231,19 @@ const adminController = {
 
 }
 
-
+function uploadImg(file) {
+  return new Promise((resolve, reject) => {
+    imgur.setClientID(IMGUR_CLIENT_ID)
+    if (file) {
+      imgur.upload(file.path, (err, img) => {
+        if (err)
+          reject(err)
+        resolve(img)
+      })
+    }
+    else {
+      reject('file doesn\'t exist.')
+    }
+  })
+}
 module.exports = adminController
