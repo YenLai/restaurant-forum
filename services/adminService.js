@@ -1,6 +1,8 @@
 const db = require('../models')
 const Restaurant = db.Restaurant
 const Category = db.Category
+const imgur = require('imgur-node-api')
+const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
 const adminService = {
   getRestaurants: (req, res, callback) => {
@@ -48,5 +50,57 @@ const adminService = {
       })
       .catch((err) => res.send(err))
   },
+  postRestaurant: (req, res, callback) => {
+    const { name, tel, address, opening_hours, description, CategoryId } = req.body
+    if (!name) {
+      return callback({ status: 'error', message: 'name didn\'t exist.' })
+    }
+    const { file } = req
+    uploadImg(file)
+      .then((img) => {
+        return Restaurant.create({
+          name,
+          tel,
+          address,
+          opening_hours,
+          description,
+          image: img.data.link,
+          CategoryId
+        })
+          .then(() => { callback({ status: 'success', message: '餐廳新增成功。' }) })
+          .catch((err) => callback({ status: 'error', message: err }))
+      })
+      .catch((err) => {
+        // file doesn't exist or fail to upload.
+        return Restaurant.create({
+          name,
+          tel,
+          address,
+          opening_hours,
+          description,
+          image: null,
+          CategoryId
+        })
+          .then(() => { callback({ status: 'success', message: '餐廳新增成功。' }) })
+          .catch((err) => callback({ status: 'error', message: err }))
+      })
+
+  },
+}
+
+function uploadImg(file) {
+  return new Promise((resolve, reject) => {
+    imgur.setClientID(IMGUR_CLIENT_ID)
+    if (file) {
+      imgur.upload(file.path, (err, img) => {
+        if (err)
+          reject(err)
+        resolve(img)
+      })
+    }
+    else {
+      reject('file doesn\'t exist.')
+    }
+  })
 }
 module.exports = adminService

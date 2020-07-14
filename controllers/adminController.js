@@ -24,41 +24,14 @@ const adminController = {
   },
 
   postRestaurant: (req, res) => {
-    const { name, tel, address, opening_hours, description, CategoryId } = req.body
-    if (!name) {
-      req.flash('error_messages', '餐廳名稱為必填欄位。')
-      return res.redirect('back')
-    }
-    const { file } = req
-    uploadImg(file)
-      .then((img) => {
-        return Restaurant.create({
-          name,
-          tel,
-          address,
-          opening_hours,
-          description,
-          image: img.data.link,
-          CategoryId
-        })
-      })
-      .catch((err) => {
-        // file doesn't exist or fail to upload.
-        console.log(err)
-        return Restaurant.create({
-          name,
-          tel,
-          address,
-          opening_hours,
-          description,
-          image: null,
-          CategoryId
-        })
-      })
-      .then(() => {
-        req.flash('success_messages', '餐廳新增成功。')
-        return res.redirect('/admin/restaurants')
-      })
+    adminService.postRestaurant(req, res, (data) => {
+      if (data['status'] === 'error') {
+        req.flash('error_messages', data['message'])
+        return res.redirect('back')
+      }
+      req.flash('success_messages', data['message'])
+      return res.redirect('/admin/restaurants')
+    })
   },
 
   getRestaurant: (req, res) => {
@@ -125,7 +98,7 @@ const adminController = {
 
   deleteRestaurant: (req, res) => {
     adminService.deleteRestaurant(req, res, (data) => {
-      if (data[status] === 'success')
+      if (data['status'] === 'success')
         return res.redirect('/admin/restaurants')
     })
   },
