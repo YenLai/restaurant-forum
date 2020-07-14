@@ -125,6 +125,18 @@ const adminService = {
           })
       })
   },
+  postCategory: (req, res, callback) => {
+    if (!req.body.name) {
+      return callback({ status: 'error', message: 'name didn\'t exist.' })
+    }
+    else {
+      Category.create({ name: req.body.name })
+        .then(() => {
+          callback({ status: 'success', message: 'category成功建立!' })
+        })
+        .catch((err) => callback({ status: 'error', message: err }))
+    }
+  },
 }
 
 function uploadImg(file) {

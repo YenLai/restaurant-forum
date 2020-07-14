@@ -103,18 +103,14 @@ const adminController = {
     })
   },
   postCategory: (req, res) => {
-    if (!req.body.name) {
-      req.flash('error_messages', 'name didn\'t exist')
-      return res.redirect('back')
-    }
-    else {
-      Category.create({ name: req.body.name })
-        .then(() => {
-          req.flash('success_messages', 'category成功建立!')
-          return res.redirect('/admin/categories')
-        })
-        .catch((err) => res.send(err))
-    }
+    adminService.postCategory(req, res, (data) => {
+      if (data['status' === 'error']) {
+        req.flash('error_message', data['message'])
+        return res.redirect('back')
+      }
+      req.flash('success_message', data['message'])
+      return res.redirect('/admin/categories')
+    })
   },
   putCategory: (req, res) => {
     Category.findByPk(req.params.id)
