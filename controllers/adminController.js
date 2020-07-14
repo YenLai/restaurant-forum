@@ -123,15 +123,14 @@ const adminController = {
     })
   },
   deleteCategory: (req, res) => {
-    Category.findByPk(req.params.id)
-      .then((category) => {
-        return category.destroy()
-      })
-      .then(() => {
-        req.flash('success_messages', 'category成功刪除!')
-        res.redirect('/admin/categories')
-      })
-      .catch((err) => res.send(err))
+    adminService.deleteCategory(req, res, (data) => {
+      if (data['status'] === 'error') {
+        req.flash('error_messages', data['message'])
+        return res.redirect('back')
+      }
+      req.flash('success_messages', data['message'])
+      return res.redirect('/admin/categories')
+    })
   },
 
 }

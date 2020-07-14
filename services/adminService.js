@@ -149,6 +149,16 @@ const adminService = {
       })
       .catch((err) => callback({ status: 'error', message: err }))
   },
+  deleteCategory: (req, res, callback) => {
+    Category.findByPk(req.params.id)
+      .then((category) => {
+        return category.destroy()
+      })
+      .then(() => {
+        callback({ status: 'success', message: 'category成功刪除' })
+      })
+      .catch((err) => callback({ status: 'error', message: err }))
+  },
 }
 
 function uploadImg(file) {
