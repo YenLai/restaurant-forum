@@ -104,26 +104,23 @@ const adminController = {
   },
   postCategory: (req, res) => {
     adminService.postCategory(req, res, (data) => {
-      if (data['status' === 'error']) {
-        req.flash('error_message', data['message'])
+      if (data['status'] === 'error') {
+        req.flash('error_messages', data['message'])
         return res.redirect('back')
       }
-      req.flash('success_message', data['message'])
+      req.flash('success_messages', data['message'])
       return res.redirect('/admin/categories')
     })
   },
   putCategory: (req, res) => {
-    Category.findByPk(req.params.id)
-      .then(category => {
-        return category.update({
-          name: req.body.name
-        })
-      })
-      .then(() => {
-        req.flash('success_messages', 'category成功更新!')
-        res.redirect('/admin/categories')
-      })
-      .catch((err) => res.send(err))
+    adminService.putCategory(req, res, (data) => {
+      if (data['status'] === 'error') {
+        req.flash('error_messages', data['message'])
+        return res.redirect('back')
+      }
+      req.flash('success_messages', data['message'])
+      return res.redirect('/admin/categories')
+    })
   },
   deleteCategory: (req, res) => {
     Category.findByPk(req.params.id)

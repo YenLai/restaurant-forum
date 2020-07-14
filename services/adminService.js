@@ -137,6 +137,18 @@ const adminService = {
         .catch((err) => callback({ status: 'error', message: err }))
     }
   },
+  putCategory: (req, res, callback) => {
+    Category.findByPk(req.params.id)
+      .then(category => {
+        return category.update({
+          name: req.body.name
+        })
+      })
+      .then(() => {
+        callback({ status: 'success', message: 'category成功更新' })
+      })
+      .catch((err) => callback({ status: 'error', message: err }))
+  },
 }
 
 function uploadImg(file) {
