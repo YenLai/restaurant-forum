@@ -56,44 +56,14 @@ const adminController = {
   },
 
   putRestaurant: (req, res) => {
-    const { name, tel, address, opening_hours, description, CategoryId } = req.body
-    if (!name) {
-      req.flash('error_messages', "name didn't exist")
-      return res.redirect('back')
-    }
-    const { file } = req
-    return Restaurant.findByPk(req.params.id)
-      .then((restaurant) => {
-        uploadImg(file)
-          .then((img) => {
-            return restaurant.update({
-              name,
-              tel,
-              address,
-              opening_hours,
-              description,
-              image: img.data.link,
-              CategoryId
-            })
-          })
-          .catch((err) => {
-            // file doesn't exist or fail to upload.
-            console.log(err)
-            return restaurant.update({
-              name,
-              tel,
-              address,
-              opening_hours,
-              description,
-              image: restaurant.image,
-              CategoryId
-            })
-          })
-          .then(() => {
-            req.flash('success_messages', 'restaurant was successfully to update')
-            res.redirect(`/admin/restaurants/${req.params.id}`)
-          })
-      })
+    adminService.putRestaurant(req, res, (data) => {
+      if (data['status'] === 'error') {
+        req.flash('error_messages', data['message'])
+        return res.redirect('back')
+      }
+      req.flash('success_messages', data['message'])
+      return res.redirect(`/admin/restaurants/${req.params.id}`)
+    })
   },
 
   deleteRestaurant: (req, res) => {

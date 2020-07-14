@@ -86,6 +86,45 @@ const adminService = {
       })
 
   },
+  putRestaurant: (req, res, callback) => {
+    const { name, tel, address, opening_hours, description, CategoryId } = req.body
+    if (!name) {
+      return callback({ status: 'error', message: 'name didn\'t exist.' })
+    }
+    const { file } = req
+    return Restaurant.findByPk(req.params.id)
+      .then((restaurant) => {
+        uploadImg(file)
+          .then((img) => {
+            return restaurant.update({
+              name,
+              tel,
+              address,
+              opening_hours,
+              description,
+              image: img.data.link,
+              CategoryId
+            })
+              .then(() => { callback({ status: 'success', message: '餐廳修改成功。' }) })
+              .catch((err) => callback({ status: 'error', message: err }))
+          })
+          .catch((err) => {
+            // file doesn't exist or fail to upload.
+            console.log(err)
+            return restaurant.update({
+              name,
+              tel,
+              address,
+              opening_hours,
+              description,
+              image: restaurant.image,
+              CategoryId
+            })
+              .then(() => { callback({ status: 'success', message: '餐廳修改成功。' }) })
+              .catch((err) => callback({ status: 'error', message: err }))
+          })
+      })
+  },
 }
 
 function uploadImg(file) {
