@@ -25,7 +25,7 @@ const adminController = {
 
   postRestaurant: (req, res) => {
     adminService.postRestaurant(req, res, (data) => {
-      if (data['status'] === 'error') {
+      if (data.status === 'error') {
         req.flash('error_messages', data['message'])
         return res.redirect('back')
       }
@@ -57,7 +57,7 @@ const adminController = {
 
   putRestaurant: (req, res) => {
     adminService.putRestaurant(req, res, (data) => {
-      if (data['status'] === 'error') {
+      if (data.status === 'error') {
         req.flash('error_messages', data['message'])
         return res.redirect('back')
       }
@@ -68,32 +68,30 @@ const adminController = {
 
   deleteRestaurant: (req, res) => {
     adminService.deleteRestaurant(req, res, (data) => {
-      if (data['status'] === 'success')
+      if (data.status === 'error')
         return res.redirect('/admin/restaurants')
     })
   },
 
   // users
   getUsers: (req, res) => {
-    return User.findAll({ raw: true })
+    adminService.getUsers(req, res, (data) => {
+      if (data.status === 'error')
+        return res.render('admin/users', data)
+    })
+    return User.findAll({ raw: true, nest: true })
       .then(users => {
-        return res.render('admin/users', { users })
+        return
       })
       .catch((err) => res.send(err))
   },
-  putUsers: (req, res) => {
-    return User.findByPk(req.params.id)
-      .then(user => {
-        return user
-          .update({
-            isAdmin: !user.isAdmin
-          })
-      })
-      .then(() => {
-        req.flash('success_messages', 'user role成功更新!')
-        res.redirect('/admin/users')
-      })
-      .catch((err) => res.send(err))
+
+  putUser: (req, res) => {
+    adminService.putUser(req, res, (data) => {
+      if (data.status === 'success')
+        return res.redirect('/admin/users')
+      return res.send(data)
+    })
   },
 
   // categories
@@ -104,7 +102,7 @@ const adminController = {
   },
   postCategory: (req, res) => {
     adminService.postCategory(req, res, (data) => {
-      if (data['status'] === 'error') {
+      if (data.status === 'error') {
         req.flash('error_messages', data['message'])
         return res.redirect('back')
       }
@@ -114,7 +112,7 @@ const adminController = {
   },
   putCategory: (req, res) => {
     adminService.putCategory(req, res, (data) => {
-      if (data['status'] === 'error') {
+      if (data.status === 'error') {
         req.flash('error_messages', data['message'])
         return res.redirect('back')
       }
@@ -124,7 +122,7 @@ const adminController = {
   },
   deleteCategory: (req, res) => {
     adminService.deleteCategory(req, res, (data) => {
-      if (data['status'] === 'error') {
+      if (data.status === 'error') {
         req.flash('error_messages', data['message'])
         return res.redirect('back')
       }

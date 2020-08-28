@@ -4,17 +4,20 @@ const bodyParser = require('body-parser')
 const port = process.env.PORT || 3000
 const flash = require('connect-flash')
 const session = require('express-session')
-const passport = require('./config/passport')
 const methodOverride = require('method-override')
+const cors = require('cors')
 
 const app = express()
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
+const passport = require('./config/passport')
 
+app.use(cors())
 app.engine('hbs', hbs({ defaultLayout: 'main', extname: 'hbs', helpers: require('./config/hbs-helpers') }))
 app.set('view engine', 'hbs')
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 app.use(session({ secret: 'secret', resave: false, saveUninitialized: false }))
 app.use(flash())
 app.use(passport.initialize())
