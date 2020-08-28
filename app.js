@@ -18,7 +18,7 @@ app.engine('hbs', hbs({ defaultLayout: 'main', extname: 'hbs', helpers: require(
 app.set('view engine', 'hbs')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-app.use(session({ secret: 'secret', resave: false, saveUninitialized: false }))
+app.use(session({ secret: process.env.SESSION_KEY, resave: false, saveUninitialized: false }))
 app.use(flash())
 app.use(passport.initialize())
 app.use(passport.session())
