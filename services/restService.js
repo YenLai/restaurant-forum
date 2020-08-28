@@ -32,7 +32,7 @@ const restService = {
         ...rest.dataValues,
         description: rest.dataValues.description.substring(0, 50),
         categoryName: rest.Category.name,
-        isFavorited: req.user.FavoritedRestaurants.map(d => d.id).includes(rest.id) || [],
+        isFavorited: req.user.FavoritedRestaurants.map(d => d.id).includes(rest.id) || false,
         isLiked: req.user.LikedRestaurants.map(d => d.id).includes(rest.id)
       }))
       Category.findAll({ raw: true, nest: true }).then(categories => {
