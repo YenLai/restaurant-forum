@@ -36,16 +36,22 @@ const userService = {
       .catch(error => callback({ status: 'error', message: error }))
   },
   getUser: (req, res, callback) => {
-    User.findByPk(req.params.id)
+    User.findByPk(req.params.id, {
+      include: [
+        { model: Restaurant, as: 'FavoritedRestaurants' },
+        { model: User, as: 'Followers' },
+        { model: User, as: 'Followings' }
+      ]
+    })
       .then(user => {
         return Comment.findAll({
           where: { UserId: user.id },
           raw: true,
           nest: true,
-          include: Restaurant,
-          order: [['createdAt', 'DESC']]
+          include: Restaurant
         })
           .then((result) => {
+            console.log(user.Followings)
             let myComments = result.map(c => ({
               id: c.Restaurant.id,
               image: c.Restaurant.image,
@@ -58,9 +64,9 @@ const userService = {
               isCurrentUser: req.user.id === Number(req.params.id),
               isFollowing,
               myComments,
-              Followers: req.user.Followers.sort((a, b) => (b.Followship.createdAt - a.Followship.createdAt)),
-              Followings: req.user.Followings.sort((a, b) => (b.Followship.createdAt - a.Followship.createdAt)),
-              Favorited: req.user.FavoritedRestaurants.sort((a, b) => (b.Favorite.createdAt - a.Favorite.createdAt))
+              Followers: user.Followers.sort((a, b) => b.Followship.createdAt - a.Followship.createdAt),
+              Followings: user.Followings.sort((a, b) => b.Followship.createdAt - a.Followship.createdAt),
+              Favorited: user.FavoritedRestaurants.sort((a, b) => b.Favorite.createdAt - a.Favorite.createdAt),
             })
           })
       })
