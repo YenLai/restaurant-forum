@@ -12,7 +12,7 @@ const bcrypt = require('bcryptjs')
 const userService = {
   signUp: (req, res, callback) => {
     const { name, email, password, passwordCheck } = req.body
-
+    console.log(password, passwordCheck)
     if (password !== passwordCheck) {
       req.flash('error_messages', '密碼與確認密碼不相符。')
       return callback({ status: 'error', message: '密碼與確認密碼不相符。' })
