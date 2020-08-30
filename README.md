@@ -6,8 +6,8 @@
 :point_right: [前後分離專案](https://github.com/YenLai/restaurant-forum-vue)（Vue）
 
 ### 專案畫面
-[Imgur](https://imgur.com/EB5ovTg)
-[Imgur](https://i.imgur.com/BCRoH3y.png)
+![1](https://i.imgur.com/EB5ovTg.png)
+![2](https://i.imgur.com/BCRoH3y.png)
 
 ### 安裝＆使用
 
