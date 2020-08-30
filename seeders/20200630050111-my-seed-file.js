@@ -17,6 +17,7 @@ module.exports = {
         password: bcrypt.hashSync('12345678', bcrypt.genSaltSync(10), null),
         isAdmin: true,
         name: 'root',
+        image: 'https://kctherapy.com/wp-content/uploads/2019/09/default-user-avatar-300x293.png',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -25,6 +26,7 @@ module.exports = {
         password: bcrypt.hashSync('12345678', bcrypt.genSaltSync(10), null),
         isAdmin: false,
         name: 'user1',
+        image: 'https://kctherapy.com/wp-content/uploads/2019/09/default-user-avatar-300x293.png',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -33,6 +35,7 @@ module.exports = {
         password: bcrypt.hashSync('12345678', bcrypt.genSaltSync(10), null),
         isAdmin: false,
         name: 'user2',
+        image: 'https://kctherapy.com/wp-content/uploads/2019/09/default-user-avatar-300x293.png',
         createdAt: new Date(),
         updatedAt: new Date()
       }

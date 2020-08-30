@@ -14,11 +14,13 @@ const restController = {
   },
   getRestaurant: (req, res) => {
     restService.getRestaurant(req, res, (data) => {
-      return res.render('detail', data)
+      console.log(data)
+      return res.render('restaurant', data)
     })
   },
   getFeeds: (req, res) => {
     restService.getFeeds(req, res, (data) => {
+      console.log(data.comments)
       return res.render('feeds', data)
     })
   },

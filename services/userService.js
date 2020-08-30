@@ -51,7 +51,6 @@ const userService = {
           include: Restaurant
         })
           .then((result) => {
-            console.log(user.Followings)
             let myComments = result.map(c => ({
               id: c.Restaurant.id,
               image: c.Restaurant.image,
@@ -66,7 +65,7 @@ const userService = {
               myComments,
               Followers: user.Followers.sort((a, b) => b.Followship.createdAt - a.Followship.createdAt),
               Followings: user.Followings.sort((a, b) => b.Followship.createdAt - a.Followship.createdAt),
-              Favorited: user.FavoritedRestaurants.sort((a, b) => b.Favorite.createdAt - a.Favorite.createdAt),
+              Favorited: user.FavoritedRestaurants
             })
           })
       })

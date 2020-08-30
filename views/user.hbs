@@ -41,7 +41,7 @@
     <div class="card-header">{{Followings.length}} followings (追蹤者)</div>
     <div class="card-body">
       <div class="card-text">
-        {{#each Followings}}
+        {{#each _user.Followings}}
         <a href="/users/{{this.id}}" style="text-decoration: none;">
           <img src="{{this.image}}" alt="{{this.name}}" style="width: 70px;">
         </a>
@@ -73,7 +73,7 @@
     <div class="card-header">{{Followers.length}} followers (追隨者)</div>
     <div class="card-body">
       <div class="card-text">
-        {{#each Followers}}
+        {{#each _user.Followers}}
         <a href="/users/{{this.id}}" style="text-decoration: none;">
           <img src="{{this.image}}" alt="{{this.name}}" style="width: 70px;">
         </a>
@@ -86,7 +86,7 @@
     <div class="card-header">{{Favorited.length}} 收藏的餐廳</div>
     <div class="card-body">
       <div class="card-text">
-        {{#each Favorited}}
+        {{#each _user.FavoritedRestaurants}}
         <a href="/restaurants/{{this.id}}" style="text-decoration: none;">
           <img src="{{this.image}}" alt="{{this.name}}" style="width: 110px;">
         </a>

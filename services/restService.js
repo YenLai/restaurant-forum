@@ -54,6 +54,7 @@ const restService = {
       ]
     })
       .then(restaurant => {
+        console.log(restaurant.toJSON())
         const isFavorited = restaurant.FavoritedUsers.map(d => d.id).includes(req.user.id)
         const isLiked = req.user.LikedRestaurants.map(d => d.id).includes(restaurant.id)
         restaurant.Comments = restaurant.Comments.sort((a, b) => b.createdAt - a.createdAt)
@@ -70,15 +71,18 @@ const restService = {
   getFeeds: (req, res, callback) => {
     return Restaurant.findAll({ raw: true, nest: true, limit: 10, order: [['createdAt', 'DESC']], include: [Category] })
       .then(restaurants => {
-        Comment.findAll({ limit: 10, raw: true, nest: true, order: [['createdAt', 'DESC']], include: [User, Restaurant] })
+        return Comment.findAll({
+          limit: 10, raw: true, nest: true, order: [['createdAt', 'DESC']], include: [User, Restaurant]
+        })
           .then(comments => {
+            console.log(comments)
             callback({ restaurants, comments })
           })
       })
       .catch((error) => callback({ status: 'error', message: error }))
   },
   getDashboards: (req, res, callback) => {
-    return Restaurant.findByPk(req.params.id, {
+    return Restaurant.findByPk(req.params.restaurantId, {
       include: [
         Category,
         { model: User, as: 'FavoritedUsers' }
