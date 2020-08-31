@@ -65,7 +65,7 @@ npm run dev
 ```
 https://express-restaurant-forum.herokuapp.com/api
 ```
-[API文件](https://hackmd.io/ZOcy9olYQd2oA_PhCnpALw?both)
+[API文件](https://hackmd.io/ZOcy9olYQd2oA_PhCnpALw?view)
 
 
 ### 環境
